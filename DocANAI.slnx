@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="compose.yaml" />
+  </Folder>
+  <Project Path="src/DocANAI.Api/DocANAI.Api.csproj" />
+  <Project Path="src/DocANAI.Contracts/DocANAI.Contracts.csproj" />
+  <Project Path="src/DocANAI.Persistence/DocANAI.Persistence.csproj" />
+  <Project Path="src/DocANAI.Worker/DocANAI.Worker.csproj" />
+</Solution>

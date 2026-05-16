@@ -1,0 +1,13 @@
+﻿services:
+  docanai.api:
+    image: docanai.api
+    build:
+      context: .
+      dockerfile: src/DocANAI.Api/Dockerfile
+      
+  docanai.worker:
+    image: docanai.worker
+    build:
+      context: .
+      dockerfile: src/DocANAI.Worker/Dockerfile
+
