@@ -6,4 +6,7 @@ public class AuditableEntity<TId> : Entity<TId>, IAuditableEntity where TId : IC
 {
     public DateTime CreatedAt { get; init; }
     public DateTime UpdatedAt { get; protected set; }
+
+    protected AuditableEntity() {  }
+    protected AuditableEntity(TId id) : base(id) {  }
 }
