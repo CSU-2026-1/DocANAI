@@ -13,6 +13,23 @@
       timeout: 5s
       retries: 5
   
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER:-minioadmin}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-minioadmin123}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
   migrator:
     image: docanai.migrator
     build:
@@ -32,6 +49,11 @@
       dockerfile: src/DocANAI.Api/Dockerfile
     environment:
       - ConnectionStrings__DefaultConnection=${ConnectionStrings__DefaultConnection}
+      - MinIO__Endpoint=${MINIO_ENDPOINT}
+      - MinIO__PublicEndpoint=${MINIO_PUBLIC_ENDPOINT}
+      - MinIO__AccessKey=${MINIO_ACCESS_KEY}
+      - MinIO__SecretKey=${MINIO_SECRET_KEY}
+      - MinIO__Bucket=${MINIO_BUCKET}
       - JwtSettings__Secret=${JwtSettings__Secret}
       - JwtSettings__Issuer=${JwtSettings__Issuer}
       - JwtSettings__Audience=${JwtSettings__Audience}
@@ -54,3 +76,5 @@
       db:
         condition: service_healthy
 
+volumes:
+  minio_data:

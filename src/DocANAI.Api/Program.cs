@@ -1,5 +1,7 @@
 using System.Text;
+using DocANAI.Api.Filters;
 using DocANAI.Api.Services.Auth;
+using DocANAI.Api.Services.FileStorage;
 using DocANAI.Api.Settings;
 using DocANAI.Persistence.Context;
 using DocANAI.Persistence.Context.Interceptors;
@@ -12,6 +14,11 @@ var builder = WebApplication.CreateBuilder(args);
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 builder.Services.Configure<JwtSettings>(jwtSettings);
 var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Secret"]!);
+
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<GlobalExceptionFilter>();
+});
 
 builder.Services.AddAuthentication(options =>
     {
@@ -41,6 +48,8 @@ builder.Services.AddDbContext<PostgreSqlDbContext>(options =>
            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddSingleton<IMinioService, MinioService>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
