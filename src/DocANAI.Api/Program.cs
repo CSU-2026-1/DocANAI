@@ -1,7 +1,7 @@
 using System.Text;
 using DocANAI.Api.Filters;
+using DocANAI.Api.Infrastructure.Storage;
 using DocANAI.Api.Services.Auth;
-using DocANAI.Api.Services.FileStorage;
 using DocANAI.Api.Settings;
 using DocANAI.Persistence.Context;
 using DocANAI.Persistence.Context.Interceptors;
@@ -16,6 +16,8 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "DocANAI API", Version = "v1" });
 
+    c.OperationFilter<AuthorizeOperationFilter>();
+
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -23,18 +25,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Enter 'Bearer' [space] and your access-token"
-    });
-
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
-            },
-            Array.Empty<string>()
-        }
+        Description = "Enter your access-token"
     });
 
     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";

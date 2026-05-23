@@ -1,4 +1,4 @@
-using DocANAI.Api.Services.FileStorage;
+using DocANAI.Api.Infrastructure.Storage;
 using DocANAI.Contracts.DTOs;
 using DocANAI.Contracts.DTOs.FileStorage;
 using Microsoft.AspNetCore.Authorization;
@@ -35,7 +35,7 @@ public class FileStorageController : ControllerBase
     /// <response code="401">User not authenticated</response>
     [HttpPost("upload")]
     [RequestSizeLimit(100 * 1024 * 1024)] // 100 MB
-    public async Task<IActionResult> Upload(IFormFile file)
+    public async Task<ActionResult<UploadFileResponse>> Upload(IFormFile file)
     {
         if (file == null || file.Length == 0)
             return BadRequest(new ErrorResponse("No file uploaded"));
@@ -133,7 +133,7 @@ public class FileStorageController : ControllerBase
     /// <response code="401">User not authenticated</response>
     /// <response code="404">File not found</response>
     [HttpGet("presigned-url")]
-    public async Task<IActionResult> GetPresignedUrl(string objectName, int expiryMinutes = 5)
+    public async Task<ActionResult<PresignedUrlResponse>> GetPresignedUrl(string objectName, int expiryMinutes = 5)
     {
         if (string.IsNullOrWhiteSpace(objectName))
             return BadRequest(new ErrorResponse("objectName is required"));

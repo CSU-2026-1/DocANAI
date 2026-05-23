@@ -1,4 +1,4 @@
-namespace DocANAI.Api.Services.FileStorage;
+namespace DocANAI.Api.Infrastructure.Storage;
 
 public interface IMinioService
 {
