@@ -1,7 +1,8 @@
 using System.Text;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using DocANAI.Api.Filters;
 using DocANAI.Api.Infrastructure.Storage;
-using DocANAI.Api.Services.Auth;
 using DocANAI.Api.Settings;
 using DocANAI.Persistence.Context;
 using DocANAI.Persistence.Context.Interceptors;
@@ -9,9 +10,21 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using DocANAI.Api.Infrastructure.Authentication;
+using DocANAI.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
+    .ConfigureContainer<ContainerBuilder>(containerBuilder =>
+    {
+        containerBuilder.RegisterModule(new PersistenceInfrastructureModule
+        {
+            ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+        });
+    });
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "DocANAI API", Version = "v1" });
@@ -64,9 +77,9 @@ builder.Services.AddDbContext<PostgreSqlDbContext>(options =>
            .AddInterceptors(new UpdateAuditsSaveChangesInterceptor())
            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
 
-builder.Services.AddScoped<IAuthService, AuthService>();
-
 builder.Services.AddSingleton<IMinioService, MinioService>();
+
+builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 
 builder.Services.AddControllers(options =>
 {
