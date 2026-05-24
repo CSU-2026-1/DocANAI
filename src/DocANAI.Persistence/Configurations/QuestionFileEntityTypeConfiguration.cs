@@ -1,6 +1,5 @@
-﻿using DocANAI.Persistence.Entities.Format;
+﻿using DocANAI.Persistence.Entities;
 using DocANAI.Persistence.Entities.ProcessingTask;
-using DocANAI.Persistence.Entities.QuestionFile;
 using DocANAI.Persistence.Entities.User;
 using DocANAI.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +32,6 @@ public class QuestionFileEntityTypeConfiguration : IEntityTypeConfiguration<Ques
             .OnDelete(DeleteBehavior.Cascade);
         
         builder.Property(x => x.UserId)
-            .HasGuidConversion()
             .HasColumnName(nameof(QuestionFile.UserId).ToSnakeCase());
 
         builder.HasOne<User>()
@@ -42,7 +40,6 @@ public class QuestionFileEntityTypeConfiguration : IEntityTypeConfiguration<Ques
             .OnDelete(DeleteBehavior.Cascade);
         
         builder.Property(x => x.TaskId)
-            .HasGuidConversion()
             .HasColumnName(nameof(QuestionFile.TaskId).ToSnakeCase());
         
         builder.HasOne<ProcessingTask>()

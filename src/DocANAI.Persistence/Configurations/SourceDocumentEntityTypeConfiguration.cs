@@ -1,6 +1,5 @@
-﻿using DocANAI.Persistence.Entities.Format;
+﻿using DocANAI.Persistence.Entities;
 using DocANAI.Persistence.Entities.ProcessingTask;
-using DocANAI.Persistence.Entities.SourceDocument;
 using DocANAI.Persistence.Entities.User;
 using DocANAI.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -37,7 +36,6 @@ internal sealed class SourceDocumentEntityTypeConfiguration : IEntityTypeConfigu
             .HasColumnName(nameof(SourceDocument.Size).ToSnakeCase());
         
         builder.Property(x => x.UserId)
-            .HasGuidConversion()
             .IsRequired()
             .HasColumnName(nameof(SourceDocument.UserId).ToSnakeCase());
 
@@ -47,7 +45,6 @@ internal sealed class SourceDocumentEntityTypeConfiguration : IEntityTypeConfigu
             .OnDelete(DeleteBehavior.Cascade);
         
         builder.Property(x => x.TaskId)
-            .HasGuidConversion()
             .HasColumnName(nameof(SourceDocument.TaskId).ToSnakeCase());
         
         builder.HasOne<ProcessingTask>()

@@ -1,5 +1,4 @@
 ﻿using DocANAI.Persistence.Entities;
-using DocANAI.Persistence.Entities.Format;
 using DocANAI.Persistence.Entities.ProcessingTask;
 using DocANAI.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +28,6 @@ internal sealed class ReportConfiguration : IEntityTypeConfiguration<Report>
             .HasColumnName(nameof(Report.DeletionDate).ToSnakeCase());
 
         builder.Property(x => x.TaskId)
-            .HasGuidConversion()
             .HasColumnName(nameof(Report.TaskId).ToSnakeCase());
         
         builder.HasOne<ProcessingTask>()

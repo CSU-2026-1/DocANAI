@@ -31,7 +31,6 @@ internal sealed class ProcessingTaskConfiguration : IEntityTypeConfiguration<Pro
             .HasColumnName(nameof(ProcessingTask.EndTime).ToSnakeCase());
 
         builder.Property(x => x.UserId)
-            .HasGuidConversion()
             .HasColumnName(nameof(ProcessingTask.UserId).ToSnakeCase());
 
         builder.HasOne<User>()
@@ -40,7 +39,6 @@ internal sealed class ProcessingTaskConfiguration : IEntityTypeConfiguration<Pro
             .HasConstraintName("fk_tasks_user");
         
         builder.Property(x => x.ModelId)
-            .HasGuidConversion()
             .HasColumnName(nameof(ProcessingTask.ModelId).ToSnakeCase());
         
         builder.HasOne<AIModel>()
@@ -49,7 +47,6 @@ internal sealed class ProcessingTaskConfiguration : IEntityTypeConfiguration<Pro
             .HasConstraintName("fk_tasks_model");
         
         builder.Property(x => x.PriorityId)
-            .HasGuidConversion()
             .HasColumnName(nameof(ProcessingTask.PriorityId).ToSnakeCase());
         
         builder.HasOne<Priority>()

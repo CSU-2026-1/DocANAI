@@ -13,6 +13,8 @@ internal sealed class AIModelEntityTypeConfiguration : IEntityTypeConfiguration<
         
         builder.HasId();
         
+        builder.HasIndex(x => new { x.Name, x.Version }).IsUnique();
+        
         builder.Property(x => x.Name)
             .IsRequired()
             .HasMaxLength(255)
@@ -23,9 +25,9 @@ internal sealed class AIModelEntityTypeConfiguration : IEntityTypeConfiguration<
             .HasMaxLength(255)
             .HasColumnName(nameof(AIModel.Version).ToSnakeCase());
         
-        builder.Property(x => x.IsActive)
+        builder.Property(x => x.IsAvailable)
             .HasDefaultValue(false)
-            .HasColumnName(nameof(AIModel.IsActive).ToSnakeCase());
+            .HasColumnName(nameof(AIModel.IsAvailable).ToSnakeCase());
         
     }
 }

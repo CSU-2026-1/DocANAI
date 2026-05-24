@@ -2,7 +2,7 @@
 using DocANAI.Persistence.ValueObjects;
 using JetBrains.Annotations;
 
-namespace DocANAI.Persistence.Entities.QuestionFile;
+namespace DocANAI.Persistence.Entities;
 
 public sealed class QuestionFile : AuditableEntity<IdOf<QuestionFile>>
 {

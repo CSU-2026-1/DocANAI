@@ -1,13 +1,8 @@
 ﻿using DocANAI.Persistence.Converters;
 using DocANAI.Persistence.Entities;
 using DocANAI.Persistence.Entities.AIModel;
-using DocANAI.Persistence.Entities.Answer;
-using DocANAI.Persistence.Entities.Format;
 using DocANAI.Persistence.Entities.Priority;
 using DocANAI.Persistence.Entities.ProcessingTask;
-using DocANAI.Persistence.Entities.Question;
-using DocANAI.Persistence.Entities.QuestionFile;
-using DocANAI.Persistence.Entities.SourceDocument;
 using DocANAI.Persistence.Entities.User;
 using DocANAI.Persistence.ValueObjects;
 using Microsoft.EntityFrameworkCore;

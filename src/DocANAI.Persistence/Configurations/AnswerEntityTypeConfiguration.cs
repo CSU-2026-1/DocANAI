@@ -1,6 +1,5 @@
-﻿using DocANAI.Persistence.Entities.Answer;
+﻿using DocANAI.Persistence.Entities;
 using DocANAI.Persistence.Entities.ProcessingTask;
-using DocANAI.Persistence.Entities.Question;
 using DocANAI.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -26,7 +25,6 @@ internal sealed class AnswerEntityTypeConfiguration : IEntityTypeConfiguration<A
             .HasColumnName(nameof(Answer.ModelAccuracy).ToSnakeCase());
         
         builder.Property(x => x.QuestionId)
-            .HasGuidConversion()
             .HasColumnName(nameof(Answer.QuestionId).ToSnakeCase());
 
         builder.HasOne<Question>()
@@ -35,7 +33,6 @@ internal sealed class AnswerEntityTypeConfiguration : IEntityTypeConfiguration<A
             .OnDelete(DeleteBehavior.Cascade);
         
         builder.Property(x => x.TaskId)
-            .HasGuidConversion()
             .HasColumnName(nameof(Answer.TaskId).ToSnakeCase());
 
         builder.HasOne<ProcessingTask>()

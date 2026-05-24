@@ -2,7 +2,7 @@
 using DocANAI.Persistence.ValueObjects;
 using JetBrains.Annotations;
 
-namespace DocANAI.Persistence.Entities.SourceDocument;
+namespace DocANAI.Persistence.Entities;
 
 public sealed class SourceDocument : AuditableEntity<IdOf<SourceDocument>>
 {

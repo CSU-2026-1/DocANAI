@@ -1,4 +1,4 @@
-﻿using DocANAI.Persistence.Entities.Format;
+﻿using DocANAI.Persistence.Entities;
 using DocANAI.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

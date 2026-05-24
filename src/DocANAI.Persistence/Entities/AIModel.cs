@@ -8,14 +8,14 @@ public sealed class AIModel : Entity<IdOf<AIModel>>
 {
     public string Name { get; private set; }
     public string Version { get; private set; }
-    public bool IsActive { get; private set; }
+    public bool IsAvailable { get; private set; }
 
-    private AIModel(IdOf<AIModel> id, string name, string version, bool isActive)
+    private AIModel(IdOf<AIModel> id, string name, string version, bool isAvailable)
     {
         Id = id;
         Name = name;
         Version = version;
-        IsActive = isActive;
+        IsAvailable = isAvailable;
     }
 
     public static AIModel Create(IdOf<AIModel> id, string name, string version)
@@ -26,7 +26,7 @@ public sealed class AIModel : Entity<IdOf<AIModel>>
         return new AIModel(id, name, version, true);
     }
 
-    public void ToggleStatus(bool isActive) => IsActive = isActive;
+    public void ToggleAvailabilityStatus(bool isAvailable) => IsAvailable = isAvailable;
 
     /// <summary>
     /// Для EF Core

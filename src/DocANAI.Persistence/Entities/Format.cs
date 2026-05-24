@@ -1,7 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using JetBrains.Annotations;
 
-namespace DocANAI.Persistence.Entities.Format;
+namespace DocANAI.Persistence.Entities;
 
 public sealed class Format : Entity<string>
 {

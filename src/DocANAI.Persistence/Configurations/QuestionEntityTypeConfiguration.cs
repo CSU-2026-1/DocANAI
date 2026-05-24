@@ -1,5 +1,4 @@
-﻿using DocANAI.Persistence.Entities.Question;
-using DocANAI.Persistence.Entities.QuestionFile;
+﻿using DocANAI.Persistence.Entities;
 using DocANAI.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -24,7 +23,6 @@ internal sealed class QuestionEntityTypeConfiguration : IEntityTypeConfiguration
             .HasColumnName(nameof(Question.QuestionNumber).ToSnakeCase());
         
         builder.Property(x => x.QuestionFileId)
-            .HasGuidConversion()
             .HasColumnName(nameof(Question.QuestionFileId).ToSnakeCase());
         
         builder.HasOne<QuestionFile>()

@@ -2,18 +2,18 @@
 using DocANAI.Persistence.ValueObjects;
 using JetBrains.Annotations;
 
-namespace DocANAI.Persistence.Entities.Answer;
+namespace DocANAI.Persistence.Entities;
 
 public sealed class Answer : AuditableEntity<IdOf<Answer>>
 {
-    public IdOf<Question.Question> QuestionId { get; private set; }
+    public IdOf<Question> QuestionId { get; private set; }
     public IdOf<ProcessingTask.ProcessingTask> TaskId { get; private set; }
     public string Text { get; private set; }
     public decimal ModelAccuracy { get; private set; }
 
     private Answer(
         IdOf<Answer> id,
-        IdOf<Question.Question> questionId,
+        IdOf<Question> questionId,
         IdOf<ProcessingTask.ProcessingTask> taskId,
         string text,
         decimal modelAccuracy)
@@ -27,7 +27,7 @@ public sealed class Answer : AuditableEntity<IdOf<Answer>>
 
     public static Answer Create(
         IdOf<Answer> id,
-        IdOf<Question.Question> questionId,
+        IdOf<Question> questionId,
         IdOf<ProcessingTask.ProcessingTask> taskId,
         string text,
         decimal modelAccuracy)

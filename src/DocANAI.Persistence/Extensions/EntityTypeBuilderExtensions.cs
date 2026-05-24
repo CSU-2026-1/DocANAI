@@ -28,7 +28,6 @@ public static class EntityTypeBuilderExtensions
         entity.Property(x => x.Id)
             .ValueGeneratedNever()
             .IsRequired()
-            .HasGuidConversion()
             .HasColumnName("id");
     }
 }
