@@ -2,7 +2,7 @@ using Minio;
 using Minio.Exceptions;
 using Minio.DataModel.Args;
 
-namespace DocANAI.Api.Services.FileStorage;
+namespace DocANAI.Api.Infrastructure.Storage;
 
 public class MinioService : IMinioService
 {

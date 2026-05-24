@@ -1,4 +1,4 @@
-using DocANAI.Api.Services.FileStorage;
+using DocANAI.Api.Infrastructure.Storage;
 using DocANAI.Contracts.DTOs;
 using DocANAI.Contracts.DTOs.FileStorage;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DocANAI.Api.Controllers.FileStorage;
 
+/// <summary>
+/// Handles file operations (upload, download, delete, presigned URLs) using MinIO storage
+/// </summary>
 [Authorize]
 [ApiController]
 [Route("api/v1/[controller]")]
@@ -13,14 +16,26 @@ public class FileStorageController : ControllerBase
 {
     private readonly IMinioService _minioService;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileStorageController"/> class.
+    /// </summary>
+    /// <param name="minioService">MinIO service for file operations</param>
     public FileStorageController(IMinioService minioService)
     {
         _minioService = minioService;
     }
 
+    /// <summary>
+    /// Uploads a file to MinIO storage
+    /// </summary>
+    /// <param name="file">The file to upload (max 100 MB)</param>
+    /// <returns>File identifier, original name, and size</returns>
+    /// <response code="200">File uploaded successfully</response>
+    /// <response code="400">Invalid file or size exceeded</response>
+    /// <response code="401">User not authenticated</response>
     [HttpPost("upload")]
     [RequestSizeLimit(100 * 1024 * 1024)] // 100 MB
-    public async Task<IActionResult> Upload(IFormFile file)
+    public async Task<ActionResult<UploadFileResponse>> Upload(IFormFile file)
     {
         if (file == null || file.Length == 0)
             return BadRequest(new ErrorResponse("No file uploaded"));
@@ -46,6 +61,15 @@ public class FileStorageController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Downloads a file from MinIO storage
+    /// </summary>
+    /// <param name="objectName">Unique object identifier (path in bucket)</param>
+    /// <returns>File stream as a downloadable attachment</returns>
+    /// <response code="200">File downloaded successfully</response>
+    /// <response code="400">Invalid objectName</response>
+    /// <response code="401">User not authenticated</response>
+    /// <response code="404">File not found</response>
     [HttpGet("download")]
     public async Task<IActionResult> Download(string objectName)
     {
@@ -68,6 +92,15 @@ public class FileStorageController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Deletes a file from MinIO storage
+    /// </summary>
+    /// <param name="objectName">Unique object identifier (path in bucket)</param>
+    /// <returns>Deletion status and file identifier</returns>
+    /// <response code="200">File deleted successfully (or already missing)</response>
+    /// <response code="400">Invalid objectName</response>
+    /// <response code="401">User not authenticated</response>
+    /// <response code="500">Deletion failed due to storage error</response>
     [HttpDelete("delete")]
     public async Task<IActionResult> Delete(string objectName)
     {
@@ -89,8 +122,18 @@ public class FileStorageController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Generates a temporary presigned URL for direct file access
+    /// </summary>
+    /// <param name="objectName">Unique object identifier (path in bucket)</param>
+    /// <param name="expiryMinutes">Validity duration in minutes (default 5)</param>
+    /// <returns>Presigned URL and expiration time in seconds</returns>
+    /// <response code="200">Presigned URL generated</response>
+    /// <response code="400">Invalid objectName or expiry value</response>
+    /// <response code="401">User not authenticated</response>
+    /// <response code="404">File not found</response>
     [HttpGet("presigned-url")]
-    public async Task<IActionResult> GetPresignedUrl(string objectName, int expiryMinutes = 5)
+    public async Task<ActionResult<PresignedUrlResponse>> GetPresignedUrl(string objectName, int expiryMinutes = 5)
     {
         if (string.IsNullOrWhiteSpace(objectName))
             return BadRequest(new ErrorResponse("objectName is required"));

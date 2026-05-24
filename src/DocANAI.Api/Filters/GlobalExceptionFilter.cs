@@ -2,7 +2,6 @@ using System;
 using DocANAI.Contracts.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Logging;
 
 namespace DocANAI.Api.Filters;
 
