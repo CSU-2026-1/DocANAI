@@ -10,6 +10,7 @@ public sealed class SourceDocument : AuditableEntity<IdOf<SourceDocument>>
     public IdOf<ProcessingTask.ProcessingTask> TaskId { get; private set; }
     public string Extension { get; private set; }
     public string Filename { get; private set; }
+    public string FilePath { get; private set; }
     public int Size { get; private set; }
 
     private SourceDocument(
@@ -18,6 +19,7 @@ public sealed class SourceDocument : AuditableEntity<IdOf<SourceDocument>>
         IdOf<ProcessingTask.ProcessingTask> taskId,
         string extension,
         string filename,
+        string filePath,
         int size)
     {
         Id = id;
@@ -25,6 +27,7 @@ public sealed class SourceDocument : AuditableEntity<IdOf<SourceDocument>>
         TaskId = taskId;
         Extension = extension;
         Filename = filename;
+        FilePath = filePath;
         Size = size;
     }
 
@@ -34,8 +37,9 @@ public sealed class SourceDocument : AuditableEntity<IdOf<SourceDocument>>
         IdOf<ProcessingTask.ProcessingTask> taskId,
         string extension,
         string filename,
+        string filePath,
         int size)
-        => new(id, userId, taskId, extension, filename, size);
+        => new(id, userId, taskId, extension, filename, filePath, size);
 
     [UsedImplicitly]
     #pragma warning disable CS8618

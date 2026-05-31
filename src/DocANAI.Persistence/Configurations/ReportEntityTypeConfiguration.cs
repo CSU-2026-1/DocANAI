@@ -17,6 +17,11 @@ internal sealed class ReportConfiguration : IEntityTypeConfiguration<Report>
         builder.Property(x => x.Extension)
             .HasMaxLength(20).IsRequired()
             .HasColumnName(nameof(Report.Extension).ToSnakeCase());
+
+        builder.Property(x => x.FilePath)
+            .IsRequired()
+            .HasMaxLength(1024)
+            .HasColumnName(nameof(Report.FilePath).ToSnakeCase());
         
         builder.HasOne<Format>()
             .WithMany()

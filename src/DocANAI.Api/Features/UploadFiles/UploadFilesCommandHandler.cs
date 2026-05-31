@@ -31,7 +31,8 @@ internal sealed class UploadFilesCommandHandler(
                     command.UserId,
                     command.TaskId,
                     extension,
-                    command.File.FileName
+                    command.File.FileName,
+                    objectName
                 );
                 
                 await questionFilesRepository.AddAsync(questionFile, ct);
@@ -45,6 +46,7 @@ internal sealed class UploadFilesCommandHandler(
                     command.TaskId,
                     extension,
                     command.File.FileName,
+                    objectName,
                     (int)command.File.Length
                 );
                 

@@ -23,6 +23,7 @@ internal sealed class QuestionEntityTypeConfiguration : IEntityTypeConfiguration
             .HasColumnName(nameof(Question.QuestionNumber).ToSnakeCase());
         
         builder.Property(x => x.QuestionFileId)
+            .IsRequired(false)
             .HasColumnName(nameof(Question.QuestionFileId).ToSnakeCase());
         
         builder.HasOne<QuestionFile>()

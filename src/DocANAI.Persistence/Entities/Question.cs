@@ -6,13 +6,13 @@ namespace DocANAI.Persistence.Entities;
 
 public sealed class Question : AuditableEntity<IdOf<Question>>
 {
-    public IdOf<QuestionFile> QuestionFileId { get; private set; }
+    public IdOf<QuestionFile>? QuestionFileId { get; private set; }
     public int QuestionNumber { get; private set; }
     public string Text { get; private set; }
 
     private Question(
         IdOf<Question> id,
-        IdOf<QuestionFile> questionFileId,
+        IdOf<QuestionFile>? questionFileId,
         int questionNumber,
         string text)
     {
@@ -24,7 +24,7 @@ public sealed class Question : AuditableEntity<IdOf<Question>>
 
     public static Question Create(
         IdOf<Question> id,
-        IdOf<QuestionFile> questionFileId,
+        IdOf<QuestionFile>? questionFileId,
         int questionNumber,
         string text)
         => new(id, questionFileId, questionNumber, text);
