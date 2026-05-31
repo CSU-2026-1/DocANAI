@@ -1,16 +1,19 @@
 using DocANAI.Contracts.Messages;
+using DocANAI.Worker.Features.ProcessTask;
 using MassTransit;
 
 namespace DocANAI.Worker.Consumers;
 
-public sealed class ProcessTaskConsumer(ILogger<ProcessTaskConsumer> logger) : IConsumer<ProcessTaskMessage>
+public sealed class ProcessTaskConsumer(
+    IProcessTaskProcessor processTaskProcessor,
+    ILogger<ProcessTaskConsumer> logger) : IConsumer<ProcessTaskMessage>
 {
-    public Task Consume(ConsumeContext<ProcessTaskMessage> context)
+    public async Task Consume(ConsumeContext<ProcessTaskMessage> context)
     {
         logger.LogInformation(
             "Received ProcessTaskMessage for task {TaskId}",
             context.Message.TaskId);
 
-        return Task.CompletedTask;
+        await processTaskProcessor.ProcessAsync(context.Message.TaskId, context.CancellationToken);
     }
 }

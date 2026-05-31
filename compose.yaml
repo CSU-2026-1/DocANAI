@@ -100,10 +100,16 @@
       - RabbitMQ__Username=${RabbitMQ__Username:-guest}
       - RabbitMQ__Password=${RabbitMQ__Password:-guest}
       - RabbitMQ__VirtualHost=${RabbitMQ__VirtualHost:-/}
+      - MinIO__Endpoint=${MINIO_ENDPOINT}
+      - MinIO__AccessKey=${MINIO_ACCESS_KEY}
+      - MinIO__SecretKey=${MINIO_SECRET_KEY}
+      - MinIO__Bucket=${MINIO_BUCKET}
     depends_on:
       db:
         condition: service_healthy
       rabbitmq:
+        condition: service_healthy
+      minio:
         condition: service_healthy
   
   client:
