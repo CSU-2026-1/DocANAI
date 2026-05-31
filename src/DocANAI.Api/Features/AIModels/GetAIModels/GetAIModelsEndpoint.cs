@@ -1,0 +1,28 @@
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace DocANAI.Api.Features.AIModels.GetAIModels;
+
+/// <summary>
+/// Returns AI models available for task processing (Ollama).
+/// </summary>
+[Authorize]
+[ApiController]
+[Route("api/v1/ai-models")]
+public sealed class GetAIModelsEndpoint(IMediator mediator) : ControllerBase
+{
+    /// <summary>
+    /// Lists AI models that can be selected when creating a processing task.
+    /// </summary>
+    /// <param name="includeUnavailable">Include models marked as unavailable in the database.</param>
+    [HttpGet]
+    public async Task<IActionResult> Get([FromQuery] bool includeUnavailable = false, CancellationToken ct = default)
+    {
+        var result = await mediator.Send(new GetAIModelsQuery(includeUnavailable), ct);
+
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : BadRequest(new { Error = result.Error });
+    }
+}

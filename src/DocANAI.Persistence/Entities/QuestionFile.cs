@@ -10,19 +10,22 @@ public sealed class QuestionFile : AuditableEntity<IdOf<QuestionFile>>
     public IdOf<ProcessingTask.ProcessingTask> TaskId { get; private set; }
     public string Extension { get; private set; }
     public string Filename { get; private set; }
+    public string FilePath { get; private set; }
 
     private QuestionFile(
         IdOf<QuestionFile> id,
         IdOf<User.User> userId,
         IdOf<ProcessingTask.ProcessingTask> taskId,
         string extension,
-        string filename)
+        string filename,
+        string filePath)
     {
         Id = id;
         UserId = userId;
         TaskId = taskId;
         Extension = extension;
         Filename = filename;
+        FilePath = filePath;
     }
 
     public static QuestionFile Create(
@@ -30,8 +33,9 @@ public sealed class QuestionFile : AuditableEntity<IdOf<QuestionFile>>
         IdOf<User.User> userId,
         IdOf<ProcessingTask.ProcessingTask> taskId,
         string extension,
-        string filename)
-        => new(id, userId, taskId, extension, filename);
+        string filename,
+        string filePath)
+        => new(id, userId, taskId, extension, filename, filePath);
 
     [UsedImplicitly]
     #pragma warning disable CS8618

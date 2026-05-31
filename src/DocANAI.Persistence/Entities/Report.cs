@@ -8,17 +8,20 @@ public sealed class Report : AuditableEntity<IdOf<Report>>
 {
     public IdOf<ProcessingTask.ProcessingTask> TaskId { get; private set; }
     public string Extension { get; private set; }
+    public string FilePath { get; private set; }
     public DateTime? DeletionDate { get; private set; }
 
     private Report(
         IdOf<Report> id,
         IdOf<ProcessingTask.ProcessingTask> taskId,
         string extension,
+        string filePath,
         DateTime? deletionDate)
     {
         Id = id;
         TaskId = taskId;
         Extension = extension;
+        FilePath = filePath;
         DeletionDate = deletionDate;
     }
 
@@ -26,8 +29,9 @@ public sealed class Report : AuditableEntity<IdOf<Report>>
         IdOf<Report> id,
         IdOf<ProcessingTask.ProcessingTask> taskId,
         string extension,
+        string filePath,
         DateTime? deletionDate = null)
-        => new(id, taskId, extension, deletionDate);
+        => new(id, taskId, extension, filePath, deletionDate);
 
     [UsedImplicitly]
     #pragma warning disable CS8618

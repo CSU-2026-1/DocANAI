@@ -13,6 +13,27 @@
       timeout: 5s
       retries: 5
   
+  rabbitmq:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/data
+
   minio:
     image: minio/minio:latest
     command: server /data --console-address ":9001"
@@ -59,6 +80,11 @@
       - JwtSettings__Audience=${JwtSettings__Audience}
       - JwtSettings__AccessTokenExpiryMinutes=${JwtSettings__AccessTokenExpiryMinutes}
       - JwtSettings__RefreshTokenExpiryDays=${JwtSettings__RefreshTokenExpiryDays}
+      - RabbitMQ__Host=${RabbitMQ__Host:-rabbitmq}
+      - RabbitMQ__Port=${RabbitMQ__Port:-5672}
+      - RabbitMQ__Username=${RabbitMQ__Username:-guest}
+      - RabbitMQ__Password=${RabbitMQ__Password:-guest}
+      - RabbitMQ__VirtualHost=${RabbitMQ__VirtualHost:-/}
       - ASPNETCORE_URLS=http://+:8080
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
@@ -66,6 +92,8 @@
     depends_on:
       migrator:
         condition: service_completed_successfully
+      rabbitmq:
+        condition: service_healthy
       
   docanai.worker:
     image: docanai.worker
@@ -74,9 +102,29 @@
       dockerfile: src/DocANAI.Worker/Dockerfile
     environment:
       - ConnectionStrings__DefaultConnection=${ConnectionStrings__DefaultConnection}
+      - RabbitMQ__Host=${RabbitMQ__Host:-rabbitmq}
+      - RabbitMQ__Port=${RabbitMQ__Port:-5672}
+      - RabbitMQ__Username=${RabbitMQ__Username:-guest}
+      - RabbitMQ__Password=${RabbitMQ__Password:-guest}
+      - RabbitMQ__VirtualHost=${RabbitMQ__VirtualHost:-/}
+      - MinIO__Endpoint=${MINIO_ENDPOINT}
+      - MinIO__AccessKey=${MINIO_ACCESS_KEY}
+      - MinIO__SecretKey=${MINIO_SECRET_KEY}
+      - MinIO__Bucket=${MINIO_BUCKET}
+      - Ollama__BaseUrl=${Ollama__BaseUrl:-http://ollama:11434}
+      - Ollama__TimeoutSeconds=${Ollama__TimeoutSeconds:-120}
+      - Ollama__MaxRetries=${Ollama__MaxRetries:-3}
+      - Ollama__RetryDelaySeconds=${Ollama__RetryDelaySeconds:-2}
+      - Ollama__MaxDocumentCharacters=${Ollama__MaxDocumentCharacters:-120000}
     depends_on:
       db:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      ollama:
+        condition: service_started
   
   client:
     build: ./client
@@ -87,3 +135,4 @@
 
 volumes:
   minio_data:
+  ollama_data:

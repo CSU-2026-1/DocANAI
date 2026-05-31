@@ -11,6 +11,9 @@ namespace DocANAI.Persistence.Repositories.AIModels;
 [Repository]
 public class AIModelsRepository(PostgreSqlDbContext dbContext): BaseRepository<AIModel, IdOf<AIModel>>(dbContext), IAIModelsRepository
 {
+    public Task<List<AIModel>> GetAllModelsAsync(CancellationToken ct = default)
+        => DbContext.AIModels.ToListAsync(ct);
+
     public Task<List<AIModel>> GetAvailableModelsAsync(CancellationToken ct = default)
         => DbContext.AIModels
             .Where(m => m.IsAvailable)

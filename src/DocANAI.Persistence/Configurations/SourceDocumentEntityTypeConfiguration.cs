@@ -20,6 +20,11 @@ internal sealed class SourceDocumentEntityTypeConfiguration : IEntityTypeConfigu
             .IsRequired()
             .HasMaxLength(255)
             .HasColumnName(nameof(SourceDocument.Filename).ToSnakeCase());
+
+        builder.Property(x => x.FilePath)
+            .IsRequired()
+            .HasMaxLength(1024)
+            .HasColumnName(nameof(SourceDocument.FilePath).ToSnakeCase());
         
         builder.Property(x => x.Extension)
             .IsRequired()
