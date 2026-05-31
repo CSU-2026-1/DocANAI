@@ -27,6 +27,13 @@
       timeout: 5s
       retries: 5
 
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/data
+
   minio:
     image: minio/minio:latest
     command: server /data --console-address ":9001"
@@ -104,6 +111,11 @@
       - MinIO__AccessKey=${MINIO_ACCESS_KEY}
       - MinIO__SecretKey=${MINIO_SECRET_KEY}
       - MinIO__Bucket=${MINIO_BUCKET}
+      - Ollama__BaseUrl=${Ollama__BaseUrl:-http://ollama:11434}
+      - Ollama__TimeoutSeconds=${Ollama__TimeoutSeconds:-120}
+      - Ollama__MaxRetries=${Ollama__MaxRetries:-3}
+      - Ollama__RetryDelaySeconds=${Ollama__RetryDelaySeconds:-2}
+      - Ollama__MaxDocumentCharacters=${Ollama__MaxDocumentCharacters:-120000}
     depends_on:
       db:
         condition: service_healthy
@@ -111,6 +123,8 @@
         condition: service_healthy
       minio:
         condition: service_healthy
+      ollama:
+        condition: service_started
   
   client:
     build: ./client
@@ -121,3 +135,4 @@
 
 volumes:
   minio_data:
+  ollama_data:
