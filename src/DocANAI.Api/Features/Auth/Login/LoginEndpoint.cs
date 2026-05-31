@@ -1,4 +1,5 @@
-﻿using DocANAI.Contracts.DTOs.Auth;
+﻿using DocANAI.Contracts.DTOs;
+using DocANAI.Contracts.DTOs.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,7 @@ namespace DocANAI.Api.Features.Auth.Login;
 /// <param name="mediator">Mediator for sending commands</param>
 [ApiController]
 [Route("api/v1/auth")]
+[Tags("Auth")]
 public sealed class LoginEndpoint(IMediator mediator) : ControllerBase
 {
     /// <summary>
@@ -21,6 +23,10 @@ public sealed class LoginEndpoint(IMediator mediator) : ControllerBase
     /// <response code="200">Login successful</response>
     /// <response code="401">Invalid username or password</response>
     [HttpPost("login")]
+    [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken ct)
     {
         var command = new LoginCommand(request, GetIpAddress());

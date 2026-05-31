@@ -1,4 +1,6 @@
 ﻿using System.Security.Claims;
+using DocANAI.Contracts.DTOs;
+using DocANAI.Contracts.DTOs.FileStorage;
 using DocANAI.Persistence.Entities.ProcessingTask;
 using DocANAI.Persistence.Entities.User;
 using DocANAI.Persistence.ValueObjects;
@@ -15,6 +17,7 @@ namespace DocANAI.Api.Features.UploadFiles;
 [Authorize]
 [ApiController]
 [Route("api/v1/filestorage")]
+[Tags("FileStorage")]
 public sealed class UploadFilesEndpoint(IMediator mediator) : ControllerBase
 {
     /// <summary>
@@ -30,6 +33,10 @@ public sealed class UploadFilesEndpoint(IMediator mediator) : ControllerBase
     /// <response code="401">User not authenticated</response>
     [HttpPost("upload")]
     [RequestSizeLimit(100 * 1024 * 1024)] // 100 MB
+    [ProducesResponseType(typeof(UploadFileResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Upload(
         IFormFile file,
         [FromQuery] Guid taskId,

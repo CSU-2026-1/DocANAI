@@ -2,7 +2,7 @@
 using DocANAI.Persistence.Repositories.RefreshTokens;
 using MediatR;
 
-namespace DocANAI.Api.Features.Revoke;
+namespace DocANAI.Api.Features.Auth.Revoke;
 
 internal sealed class RevokeCommandHandler(IRefreshTokensRepository refreshTokensRepository)
     : IRequestHandler<RevokeCommand, Result<bool, string>>

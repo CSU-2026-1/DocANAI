@@ -1,9 +1,10 @@
-﻿using DocANAI.Contracts.DTOs.Auth;
+﻿using DocANAI.Contracts.DTOs;
+using DocANAI.Contracts.DTOs.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DocANAI.Api.Features.Revoke;
+namespace DocANAI.Api.Features.Auth.Revoke;
 
 /// <summary>
 /// Endpoint for revoking refresh tokens (logout).
@@ -12,6 +13,7 @@ namespace DocANAI.Api.Features.Revoke;
 [Authorize]
 [ApiController]
 [Route("api/v1/auth")]
+[Tags("Auth")]
 public sealed class RevokeEndpoint(IMediator mediator) : ControllerBase
 {
     /// <summary>
@@ -24,6 +26,10 @@ public sealed class RevokeEndpoint(IMediator mediator) : ControllerBase
     /// <response code="400">Token not found or already revoked</response>
     /// <response code="401">User not authenticated</response>
     [HttpPost("revoke")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Revoke([FromBody] RevokeTokenRequest request, CancellationToken ct)
     {
         var command = new RevokeCommand(request.RefreshToken, GetIpAddress());

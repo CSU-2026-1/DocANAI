@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using DocANAI.Contracts.DTOs;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,7 @@ namespace DocANAI.Api.Features.DownloadReport;
 [Authorize]
 [ApiController]
 [Route("api/v1/filestorage")]
+[Tags("FileStorage")]
 public sealed class DownloadReportEndpoint(IMediator mediator) : ControllerBase
 {
     /// <summary>
@@ -24,6 +26,11 @@ public sealed class DownloadReportEndpoint(IMediator mediator) : ControllerBase
     /// <response code="401">User not authenticated</response>
     /// <response code="404">File not found in storage</response>
     [HttpGet("download")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Download([FromQuery] string objectName, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(objectName) || objectName.Contains(".."))

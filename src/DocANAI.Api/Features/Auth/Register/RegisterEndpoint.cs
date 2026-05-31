@@ -1,4 +1,5 @@
-﻿using DocANAI.Contracts.DTOs.Auth;
+﻿using DocANAI.Contracts.DTOs;
+using DocANAI.Contracts.DTOs.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,7 @@ namespace DocANAI.Api.Features.Auth.Register;
 /// <param name="mediator">Mediator for sending commands</param>
 [ApiController]
 [Route("api/v1/auth")]
+[Tags("Auth")]
 public sealed class RegisterEndpoint(IMediator mediator) : ControllerBase
 {
     /// <summary>
@@ -21,6 +23,9 @@ public sealed class RegisterEndpoint(IMediator mediator) : ControllerBase
     /// <response code="200">User registered successfully</response>
     /// <response code="400">Username already exists or invalid request data</response>
     [HttpPost("register")]
+    [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request, CancellationToken ct)
     {
         var command = new RegisterCommand(request, GetIpAddress());

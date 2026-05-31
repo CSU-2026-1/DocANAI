@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using DocANAI.Contracts.DTOs;
+using DocANAI.Contracts.DTOs.FileStorage;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +13,7 @@ namespace DocANAI.Api.Features.DeleteFile;
 [Authorize]
 [ApiController]
 [Route("api/v1/filestorage")]
+[Tags("FileStorage")]
 public sealed class DeleteFileEndpoint(IMediator mediator) : ControllerBase
 {
     /// <summary>
@@ -24,6 +27,10 @@ public sealed class DeleteFileEndpoint(IMediator mediator) : ControllerBase
     /// <response code="401">User not authenticated</response>
     /// <response code="500">File deletion failed due to storage error</response>
     [HttpDelete("delete")]
+    [ProducesResponseType(typeof(DeleteFileResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Delete([FromQuery] string objectName, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(objectName) || objectName.Contains(".."))

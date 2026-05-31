@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using DocANAI.Contracts.DTOs;
+using DocANAI.Contracts.DTOs.FileStorage;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +13,7 @@ namespace DocANAI.Api.Features.GetPresignedUrl;
 [Authorize]
 [ApiController]
 [Route("api/v1/filestorage")]
+[Tags("FileStorage")]
 public sealed class GetPresignedUrlEndpoint(IMediator mediator) : ControllerBase
 {
     /// <summary>
@@ -25,6 +28,11 @@ public sealed class GetPresignedUrlEndpoint(IMediator mediator) : ControllerBase
     /// <response code="401">User not authenticated</response>
     /// <response code="404">File not found in storage</response>
     [HttpGet("presigned-url")]
+    [ProducesResponseType(typeof(PresignedUrlResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetPresignedUrl(
         [FromQuery] string objectName,
         [FromQuery] int expiryMinutes = 5,

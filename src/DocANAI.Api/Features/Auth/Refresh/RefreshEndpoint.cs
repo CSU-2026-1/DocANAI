@@ -1,4 +1,5 @@
-﻿using DocANAI.Contracts.DTOs.Auth;
+﻿using DocANAI.Contracts.DTOs;
+using DocANAI.Contracts.DTOs.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,7 @@ namespace DocANAI.Api.Features.Auth.Refresh;
 /// <param name="mediator">Mediator for sending commands</param>
 [ApiController]
 [Route("api/v1/auth")]
+[Tags("Auth")]
 public sealed class RefreshEndpoint(IMediator mediator) : ControllerBase
 {
     /// <summary>
@@ -21,6 +23,10 @@ public sealed class RefreshEndpoint(IMediator mediator) : ControllerBase
     /// <response code="200">Tokens refreshed successfully</response>
     /// <response code="401">Invalid or expired refresh token</response>
     [HttpPost("refresh")]
+    [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request, CancellationToken ct)
     {
         var command = new RefreshCommand(request.RefreshToken, GetIpAddress());
