@@ -2,6 +2,7 @@ using System.Text;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using DocANAI.Api.Filters;
+using DocANAI.Api.Infrastructure.Messaging;
 using DocANAI.Api.Infrastructure.Storage;
 using DocANAI.Api.Settings;
 using DocANAI.Persistence.Context;
@@ -92,6 +93,8 @@ builder.Services.AddDbContext<PostgreSqlDbContext>(options =>
            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
 
 builder.Services.AddSingleton<IMinioService, MinioService>();
+
+builder.Services.AddRabbitMqMassTransit(builder.Configuration);
 
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 

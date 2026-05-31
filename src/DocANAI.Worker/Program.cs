@@ -1,7 +1,8 @@
-using DocANAI.Worker;
+using DocANAI.Worker.Infrastructure.Messaging;
 
 var builder = Host.CreateApplicationBuilder(args);
-builder.Services.AddHostedService<Worker>();
+
+builder.Services.AddRabbitMqMassTransit(builder.Configuration);
 
 var host = builder.Build();
 host.Run();

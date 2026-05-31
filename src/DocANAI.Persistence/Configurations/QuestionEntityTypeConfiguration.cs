@@ -1,4 +1,5 @@
 ﻿using DocANAI.Persistence.Entities;
+using DocANAI.Persistence.Entities.ProcessingTask;
 using DocANAI.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -21,6 +22,10 @@ internal sealed class QuestionEntityTypeConfiguration : IEntityTypeConfiguration
         builder.Property(x => x.QuestionNumber)
             .IsRequired()
             .HasColumnName(nameof(Question.QuestionNumber).ToSnakeCase());
+
+        builder.Property(x => x.TaskId)
+            .IsRequired()
+            .HasColumnName(nameof(Question.TaskId).ToSnakeCase());
         
         builder.Property(x => x.QuestionFileId)
             .IsRequired(false)
@@ -29,6 +34,11 @@ internal sealed class QuestionEntityTypeConfiguration : IEntityTypeConfiguration
         builder.HasOne<QuestionFile>()
             .WithMany()
             .HasForeignKey(x => x.QuestionFileId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne<ProcessingTask>()
+            .WithMany()
+            .HasForeignKey(x => x.TaskId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

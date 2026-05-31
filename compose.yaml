@@ -13,6 +13,20 @@
       timeout: 5s
       retries: 5
   
+  rabbitmq:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   minio:
     image: minio/minio:latest
     command: server /data --console-address ":9001"
@@ -59,6 +73,11 @@
       - JwtSettings__Audience=${JwtSettings__Audience}
       - JwtSettings__AccessTokenExpiryMinutes=${JwtSettings__AccessTokenExpiryMinutes}
       - JwtSettings__RefreshTokenExpiryDays=${JwtSettings__RefreshTokenExpiryDays}
+      - RabbitMQ__Host=${RabbitMQ__Host:-rabbitmq}
+      - RabbitMQ__Port=${RabbitMQ__Port:-5672}
+      - RabbitMQ__Username=${RabbitMQ__Username:-guest}
+      - RabbitMQ__Password=${RabbitMQ__Password:-guest}
+      - RabbitMQ__VirtualHost=${RabbitMQ__VirtualHost:-/}
       - ASPNETCORE_URLS=http://+:8080
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
@@ -66,6 +85,8 @@
     depends_on:
       migrator:
         condition: service_completed_successfully
+      rabbitmq:
+        condition: service_healthy
       
   docanai.worker:
     image: docanai.worker
@@ -74,8 +95,15 @@
       dockerfile: src/DocANAI.Worker/Dockerfile
     environment:
       - ConnectionStrings__DefaultConnection=${ConnectionStrings__DefaultConnection}
+      - RabbitMQ__Host=${RabbitMQ__Host:-rabbitmq}
+      - RabbitMQ__Port=${RabbitMQ__Port:-5672}
+      - RabbitMQ__Username=${RabbitMQ__Username:-guest}
+      - RabbitMQ__Password=${RabbitMQ__Password:-guest}
+      - RabbitMQ__VirtualHost=${RabbitMQ__VirtualHost:-/}
     depends_on:
       db:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
   
   client:
