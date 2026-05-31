@@ -84,8 +84,6 @@
       - "3000:80"
     depends_on:
       - docanai.api
-    environment:
-      - VITE_API_BASE_URL=http://docanai.api:8080
 
 volumes:
   minio_data:
