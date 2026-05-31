@@ -1,0 +1,33 @@
+@use './helpers/' as *;
+
+:root {
+  --color-light: #FFFFFF;
+  --color-light-alt: #FAFAFA;
+
+  --color-dark: #373737;
+
+  --color-accent-1: #E49A34;
+  --color-accent-2: #E45D34;
+
+  --color-accent-gradient: linear-gradient(
+    150deg,
+    var(--color-accent-1) 0%,
+    var(--color-accent-2) 100%
+  );
+
+  --color-gray: #B8B8B8;
+  --color-gray-light: #EFEFEF;
+
+  --border: #{rem(1)} solid var(--color-gray-light);
+  --border-accent: #{rem(1)} solid var(--color-accent-2);
+
+  --border-radius: #{rem(24)};
+  --border-radius-small: #{rem(6)};
+
+  --font-family: 'Inter', system-ui, sans-serif;
+
+  --shadow-dark: 0 #{rem(4)} #{rem(12)} 0 rgba(55, 55, 55, 0.15);
+  --shadow-accent: 0 0 #{rem(12)} 0 rgba(228, 93, 51, 0.5);
+
+  --transition-duration: 0.2s;
+}
