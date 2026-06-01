@@ -1,4 +1,6 @@
 ﻿services:
+  
+  # PostgreSQL Database 17
   db:
     image: postgres:17
     environment:
@@ -13,6 +15,7 @@
       timeout: 5s
       retries: 5
   
+  # RabbitMQ
   rabbitmq:
     image: rabbitmq:3-management
     environment:
@@ -27,6 +30,7 @@
       timeout: 5s
       retries: 5
 
+  # Ollama Local AI
   ollama:
     image: ollama/ollama:latest
     ports:
@@ -34,6 +38,7 @@
     volumes:
       - ollama_data:/data
 
+  # Minio S3 Storage
   minio:
     image: minio/minio:latest
     command: server /data --console-address ":9001"
@@ -51,6 +56,7 @@
       timeout: 5s
       retries: 3
 
+  # Migrator
   migrator:
     image: docanai.migrator
     build:
@@ -62,7 +68,7 @@
       db:
         condition: service_healthy
   
-  
+  # API
   docanai.api:
     image: docanai.api
     build:
@@ -85,8 +91,9 @@
       - RabbitMQ__Username=${RabbitMQ__Username:-guest}
       - RabbitMQ__Password=${RabbitMQ__Password:-guest}
       - RabbitMQ__VirtualHost=${RabbitMQ__VirtualHost:-/}
+      - ConnectionStrings__Redis=${ConnectionStrings__Redis}
       - ASPNETCORE_URLS=http://+:8080
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
     ports:
       - "8080:8080"
     depends_on:
@@ -94,7 +101,8 @@
         condition: service_completed_successfully
       rabbitmq:
         condition: service_healthy
-      
+          
+  # Worker
   docanai.worker:
     image: docanai.worker
     build:
@@ -132,6 +140,17 @@
       - "3000:80"
     depends_on:
       - docanai.api
+
+  # Redis
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
 volumes:
   minio_data:
