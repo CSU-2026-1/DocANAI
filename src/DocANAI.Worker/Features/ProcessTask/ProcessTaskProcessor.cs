@@ -14,6 +14,8 @@ using DocANAI.Worker.Infrastructure.Parsing;
 using DocANAI.Worker.Infrastructure.Reports;
 using DocANAI.Worker.Infrastructure.Storage;
 
+using TaskStatusEnum = DocANAI.Persistence.Entities.ProcessingTask.TaskStatus;
+
 namespace DocANAI.Worker.Features.ProcessTask;
 
 public sealed class ProcessTaskProcessor(
@@ -47,7 +49,7 @@ public sealed class ProcessTaskProcessor(
 
             var task = maybeTask.Value;
 
-            if (task.Status != TaskStatus.Processing)
+            if (task.Status != TaskStatusEnum.Processing)
             {
                 logger.LogWarning(
                     "Task {TaskId} has status {Status}, expected Processing. Skipping.",
@@ -174,7 +176,7 @@ public sealed class ProcessTaskProcessor(
             return;
 
         var task = maybeTask.Value;
-        if (task.Status is TaskStatus.Done or TaskStatus.Failed)
+        if (task.Status is TaskStatusEnum.Done or TaskStatusEnum.Failed)
             return;
 
         task.Fail();

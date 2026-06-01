@@ -8,34 +8,40 @@ using DocANAI.Worker.Infrastructure.Ollama;
 using DocANAI.Worker.Infrastructure.Parsing;
 using DocANAI.Worker.Infrastructure.Reports;
 using DocANAI.Worker.Infrastructure.Storage;
+using Microsoft.Extensions.Options;
 
-var builder = Host.CreateApplicationBuilder(args);
+var builder = Host.CreateDefaultBuilder(args);
 
-builder.Services.Configure<OllamaSettings>(builder.Configuration.GetSection(OllamaSettings.SectionName));
+builder.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
-builder.Services.AddHttpClient<IOllamaClient, OllamaClient>((sp, client) =>
+builder.ConfigureServices((context, services) =>
 {
-    var settings = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<OllamaSettings>>().Value;
-    client.BaseAddress = new Uri(settings.BaseUrl.TrimEnd('/') + "/");
-    client.Timeout = TimeSpan.FromSeconds(settings.TimeoutSeconds);
+    services.Configure<OllamaSettings>(context.Configuration.GetSection(OllamaSettings.SectionName));
+    services.AddHttpClient<IOllamaClient, OllamaClient>((sp, client) =>
+    {
+        var settings = sp.GetRequiredService<IOptions<OllamaSettings>>().Value;
+        client.BaseAddress = new Uri(settings.BaseUrl.TrimEnd('/') + "/");
+        client.Timeout = TimeSpan.FromSeconds(settings.TimeoutSeconds);
+    });
+    services.AddSingleton<IObjectStorageService, MinioObjectStorageService>();
+    services.AddSingleton<IDocumentTextExtractor, DocumentTextExtractor>();
+    services.AddSingleton<IExcelReportBuilder, ExcelReportBuilder>();
+    services.AddScoped<IAnswerGenerator, AnswerGenerator>();
+    services.AddScoped<IProcessTaskProcessor, ProcessTaskProcessor>();
+    services.AddRabbitMqMassTransit(context.Configuration);
 });
 
-builder.Services.AddSingleton<IObjectStorageService, MinioObjectStorageService>();
-builder.Services.AddSingleton<IDocumentTextExtractor, DocumentTextExtractor>();
-builder.Services.AddSingleton<IExcelReportBuilder, ExcelReportBuilder>();
-builder.Services.AddScoped<IAnswerGenerator, AnswerGenerator>();
-builder.Services.AddScoped<IProcessTaskProcessor, ProcessTaskProcessor>();
-
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
-    .ConfigureContainer<ContainerBuilder>(containerBuilder =>
+builder.ConfigureContainer<ContainerBuilder>(containerBuilder =>
+{
+    var configuration = new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json")
+        .Build();
+    var connectionString = configuration.GetConnectionString("DefaultConnection");
+    containerBuilder.RegisterModule(new PersistenceInfrastructureModule
     {
-        containerBuilder.RegisterModule(new PersistenceInfrastructureModule
-        {
-            ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-        });
+        ConnectionString = connectionString
     });
-
-builder.Services.AddRabbitMqMassTransit(builder.Configuration);
+});
 
 var host = builder.Build();
-host.Run();
+await host.RunAsync();

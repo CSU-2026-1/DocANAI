@@ -7,8 +7,4 @@
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="MassTransit" Version="9.1.1" />
-    </ItemGroup>
-
 </Project>

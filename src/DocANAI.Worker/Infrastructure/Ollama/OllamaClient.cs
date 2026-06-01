@@ -88,6 +88,6 @@ public sealed class OllamaClient(
             or HttpStatusCode.RequestTimeout
             or HttpStatusCode.TooManyRequests
             or >= HttpStatusCode.InternalServerError)
-        or ex is TaskCanceledException
-        or ex is IOException;
+        || ex is TaskCanceledException
+        || ex is IOException;
 }

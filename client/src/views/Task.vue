@@ -13,7 +13,7 @@ import { STEPS, useTaskStore } from '../stores/task.store.ts'
 
 const taskStore = useTaskStore()
 
-const { currentStep, sourceFiles, questionsText, questionsFile, loading, error } = storeToRefs(taskStore)
+const { currentStep, sourceFiles, questionsText, questionsFile, loading } = storeToRefs(taskStore)
 
 const setSourceFiles = (files: File[]) => {
   sourceFiles.value?.push(...files)
@@ -28,7 +28,7 @@ const setQuestionsFile = (file: File) => {
   questionsFile.value = file
 }
 
-const removeQuestionsFile = (f: File) => {
+const removeQuestionsFile = (_: File) => {
   questionsFile.value = null
 }
 

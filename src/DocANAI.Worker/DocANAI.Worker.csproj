@@ -6,20 +6,26 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>dotnet-DocANAI.Worker-e104f2da-3200-46c6-a45b-2b4897f15211</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <RestoreSources>https://api.nuget.org/v3/index.json</RestoreSources>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Autofac" Version="9.1.0" />
         <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="11.0.0" />
         <PackageReference Include="ClosedXML" Version="0.105.0" />
-        <PackageReference Include="MassTransit.RabbitMQ" Version="9.1.1" />
+        <PackageReference Include="MassTransit" Version="8.1.1" />
+        <PackageReference Include="MassTransit.Abstractions" Version="8.1.1" />
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.1.1" />
         <PackageReference Include="MediatR" Version="14.1.0" />
         <PackageReference Include="DocumentFormat.OpenXml" Version="3.3.0" />
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.3" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.8" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.8" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="10.0.8" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.8" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.3" />
         <PackageReference Include="Minio" Version="7.0.0" />
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
-        <PackageReference Include="UglyToad.PdfPig" Version="0.1.9" />
+        <PackageReference Include="UglyToad.PdfPig" Version="1.7.0-custom-5" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using DocANAI.Contracts.DTOs;
 using DocANAI.Persistence.Entities.ProcessingTask;
 using DocANAI.Persistence.Entities.User;
 using DocANAI.Persistence.ValueObjects;
@@ -11,9 +12,17 @@ namespace DocANAI.Api.Features.Questions.AddManualQuestions;
 [Authorize]
 [ApiController]
 [Route("api/v1/tasks")]
+[Tags("Tasks")]
 public sealed class AddManualQuestionsEndpoint(IMediator mediator) : ControllerBase
 {
+    /// <summary>
+    /// Adds manually written questions to an existing processing task.
+    /// </summary>
     [HttpPost("{taskId:guid}/questions/manual")]
+    [ProducesResponseType(typeof(AddManualQuestionsResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> AddManualQuestions(
         [FromRoute] Guid taskId,
         [FromBody] AddManualQuestionsRequest request,

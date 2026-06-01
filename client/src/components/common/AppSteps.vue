@@ -8,7 +8,7 @@ const props = defineProps<{
 <template>
   <div class="steps">
     <div
-      v-for="(item, index) in steps" 
+      v-for="(_, index) in steps" 
       class="steps__item"
       :key="index"
       :class="{ 'active': index + 1 === currentStep, 'completed': index + 1 < currentStep }"

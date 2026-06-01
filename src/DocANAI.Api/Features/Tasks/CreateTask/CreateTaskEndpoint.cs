@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using DocANAI.Contracts.DTOs;
 using DocANAI.Persistence.Entities.User;
 using DocANAI.Persistence.ValueObjects;
 using MediatR;
@@ -10,12 +11,17 @@ namespace DocANAI.Api.Features.Tasks.CreateTask;
 [Authorize]
 [ApiController]
 [Route("api/v1/tasks")]
+[Tags("Tasks")]
 public sealed class CreateTaskEndpoint(IMediator mediator) : ControllerBase
 {
     /// <summary>
     /// Creates a new processing task with the selected AI model.
     /// </summary>
     [HttpPost]
+    [ProducesResponseType(typeof(CreateTaskResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Create([FromBody] CreateTaskRequest request, CancellationToken ct)
     {
         var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

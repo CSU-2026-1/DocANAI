@@ -7,6 +7,8 @@ using DocANAI.Persistence.Repositories.SourceDocuments;
 using MassTransit;
 using MediatR;
 
+using TaskStatusEnum = DocANAI.Persistence.Entities.ProcessingTask.TaskStatus;
+
 namespace DocANAI.Api.Features.Tasks.StartTask;
 
 internal sealed class StartTaskCommandHandler(
@@ -27,7 +29,7 @@ internal sealed class StartTaskCommandHandler(
         if (task.UserId != command.UserId)
             return Result.Failure<StartTaskResponse, string>("You do not have access to this task");
 
-        if (task.Status != TaskStatus.InQueue)
+        if (task.Status != TaskStatusEnum.InQueue)
             return Result.Failure<StartTaskResponse, string>($"Task cannot be started from status '{task.Status}'");
 
         var sourceDocuments = await sourceDocumentsRepository.GetByTaskIdAsync(command.TaskId, ct);
