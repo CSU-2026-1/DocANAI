@@ -1,6 +1,7 @@
 using System.Text;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using DocANAI.Api.Common.Caching;
 using DocANAI.Api.Filters;
 using DocANAI.Api.Infrastructure.Messaging;
 using DocANAI.Api.Infrastructure.Storage;
@@ -12,12 +13,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using DocANAI.Api.Infrastructure.Authentication;
+using DocANAI.Api.Infrastructure.Caching;
 using DocANAI.Persistence;
+using MediatR;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()
     ?? new[] { "http://localhost:5173", "http://localhost:3000" };
+
+var redisConfiguration = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379";
+builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConfiguration));
+builder.Services.AddSingleton<ICacheService, CacheService>();
 
 builder.Services.AddCors(options =>
 {
@@ -39,7 +47,10 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
         });
     });
 
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+builder.Services.AddMediatR(cfg => {
+    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+    cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(CachingBehavior<,>));
+});
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "DocANAI API", Version = "v1" });
