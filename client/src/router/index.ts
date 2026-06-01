@@ -1,8 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth.store'
 
+import { ROUTES } from '../utils/constants.ts'
+
 const Auth = () => import('../views/Auth.vue')
 const Profile = () => import('../views/Profile.vue')
+const Task = () => import('../views/Task.vue')
 
 const router = createRouter({
   history: createWebHistory(),
@@ -11,19 +14,25 @@ const router = createRouter({
       path: '/',
       redirect: () => {
         const authStore = useAuthStore()
-        return authStore.accessToken ? '/profile' : '/auth'
+        return authStore.accessToken ? `/${ROUTES.TASK}` : `/${ROUTES.AUTH}`
       }
     },
     {
-      path: '/auth',
-      name: 'auth',
+      path: `/${ROUTES.AUTH}`,
+      name: `${ROUTES.AUTH}`,
       component: Auth,
       meta: { requiresGuest: true }
     },
     {
-      path: '/profile',
-      name: 'profile',
+      path: `/${ROUTES.PROFILE}`,
+      name: `${ROUTES.PROFILE}`,
       component: Profile,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: `/${ROUTES.TASK}`,
+      name: `${ROUTES.TASK}`,
+      component: Task,
       meta: { requiresAuth: true }
     },
     {

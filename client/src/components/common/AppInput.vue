@@ -61,6 +61,7 @@ defineExpose({ focus: () => inputRef.value?.focus() })
   align-items: center;
   position: relative;
   width: 100%;
+  color: var(--color-dark);
   border: var(--border);
   border-radius: var(--border-radius-small);
   transition-duration: var(--transition-duration);
@@ -101,6 +102,10 @@ defineExpose({ focus: () => inputRef.value?.focus() })
     background-color: transparent;
     border: none;
     outline: none;
+
+    &::placeholder {
+      color: var(--color-gray);
+    }
   }
 }
 </style>

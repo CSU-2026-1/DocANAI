@@ -7,6 +7,8 @@ import AppInput from '../components/common/AppInput.vue'
 
 import { useAuthStore } from '../stores/auth.store'
 
+import { ROUTES } from '../utils/constants.ts'
+
 const router = useRouter()
 const route = useRoute()
 
@@ -29,7 +31,7 @@ const handleSubmit = async () => {
 
       const redirectPath = route.query.redirect as string
 
-      router.push(redirectPath || '/profile')
+      router.push(redirectPath || `/${ROUTES.TASK}`)
     } catch (err) {
       console.error('Login failed:', err)
     }
@@ -43,7 +45,7 @@ const handleSubmit = async () => {
 
       const redirectPath = route.query.redirect as string
 
-      router.push(redirectPath || '/profile')
+      router.push(redirectPath || `/${ROUTES.TASK}`)
     } catch (err) {
       console.error('Register failed:', err)
     }
@@ -173,7 +175,7 @@ const handleSubmit = async () => {
         <AppButton
           v-if="isLogin"
           class="auth__card-button"
-          :text="authStore.loading ? 'Вход...' : 'Войти'"
+          :text="authStore.loading ? 'Вход...' : 'Войти в систему'"
           :type="'submit'"
           :disabled="authStore.loading"
         >
@@ -223,6 +225,7 @@ const handleSubmit = async () => {
     flex-direction: column;
     row-gap: rem(24);
     padding: rem(24);
+    background-color: var(--color-light-alt);
     border: var(--border);
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-dark);
@@ -242,7 +245,7 @@ const handleSubmit = async () => {
       @include fluid-text(20, 16);
 
       padding: rem(12) rem(30);
-      background: var(--color-light-alt);
+      background-color: var(--color-light);
       border: var(--border);
       border-radius: var(--border-radius-small);
       color: var(--color-gray);
@@ -252,14 +255,14 @@ const handleSubmit = async () => {
       cursor: pointer;
 
       @include hover {
-        border-color: var(--color-accent-2);
+        border-color: var(--color-accent-1);
       }
 
       &--active {
-        background: var(--color-accent-gradient);
+        background-color: var(--color-accent-1);
         border-color: transparent;
         color: var(--color-light);
-        box-shadow: var(--shadow-accent);
+        box-shadow: var(--shadow-dark);
 
         @include hover {
           border-color: transparent;
