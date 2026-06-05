@@ -124,6 +124,7 @@
       - Ollama__MaxRetries=${Ollama__MaxRetries:-3}
       - Ollama__RetryDelaySeconds=${Ollama__RetryDelaySeconds:-2}
       - Ollama__MaxDocumentCharacters=${Ollama__MaxDocumentCharacters:-120000}
+      - ConnectionStrings__Redis=${ConnectionStrings__Redis}
     depends_on:
       db:
         condition: service_healthy

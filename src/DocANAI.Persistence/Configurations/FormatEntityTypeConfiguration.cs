@@ -23,7 +23,7 @@ public class FormatEntityTypeConfiguration : IEntityTypeConfiguration<Format>
 
         builder.Property(x => x.MimeType)
             .IsRequired()
-            .HasMaxLength(50)
+            .HasMaxLength(100)
             .HasColumnName(nameof(Format.MimeType).ToSnakeCase());
     }
 }

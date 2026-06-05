@@ -23,7 +23,7 @@ internal sealed class ProcessingTaskConfiguration : IEntityTypeConfiguration<Pro
             .HasColumnName(nameof(ProcessingTask.Status).ToSnakeCase());
 
         builder.Property(x => x.StartTime)
-            .IsRequired()
+            .IsRequired(false)
             .HasColumnName(nameof(ProcessingTask.StartTime).ToSnakeCase());
 
         builder.Property(x => x.EndTime)
