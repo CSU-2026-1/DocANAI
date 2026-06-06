@@ -31,13 +31,10 @@ builder.ConfigureServices((context, services) =>
     services.AddRabbitMqMassTransit(context.Configuration);
 });
 
-builder.ConfigureContainer<ContainerBuilder>(containerBuilder =>
+builder.ConfigureContainer<ContainerBuilder>((context, containerBuilder) =>
 {
-    var configuration = new ConfigurationBuilder()
-        .AddJsonFile("appsettings.json")
-        .AddEnvironmentVariables()
-        .Build();
-    var connectionString = configuration.GetConnectionString("DefaultConnection");
+    var connectionString = context.Configuration
+        .GetConnectionString("DefaultConnection");
     containerBuilder.RegisterModule(new PersistenceInfrastructureModule
     {
         ConnectionString = connectionString

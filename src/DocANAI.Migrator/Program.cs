@@ -1,7 +1,9 @@
 ﻿using System.Text.RegularExpressions;
 using DocANAI.Persistence.Context;
 using DocANAI.Persistence.Context.Options;
+using DocANAI.Persistence.Seeder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 using var cts = new CancellationTokenSource();
 var ct = cts.Token;
@@ -29,6 +31,21 @@ foreach (string migrationName in pendingMigrationsNames)
 
     await dbContext.Database.MigrateAsync(migrationName, ct);
     Console.WriteLine($"Applied migration: {migrationName}");
+}
+
+var logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<DatabaseSeeder>();
+var seeder = new DatabaseSeeder(dbContext, logger);
+
+try
+{
+    await seeder.SeedAsync(envName, ct);
+}
+catch (Exception ex)
+{
+    Console.ForegroundColor = ConsoleColor.Red;
+    Console.WriteLine($"Error occurred during database seeding: {ex.Message}");
+    Console.ResetColor();
+    throw;
 }
 
 Console.WriteLine("Database migration finished successfully!");

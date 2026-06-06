@@ -2,6 +2,7 @@
 using DocANAI.Persistence.Attributes;
 using DocANAI.Persistence.Context;
 using DocANAI.Persistence.Context.Options;
+using DocANAI.Persistence.Seeder;
 
 namespace DocANAI.Persistence;
 
@@ -13,6 +14,10 @@ public sealed class PersistenceInfrastructureModule : Module
     {
         LoadDbContext(builder);
         LoadRepositories(builder);
+
+        builder.RegisterType<DatabaseSeeder>()
+            .As<IDatabaseSeeder>()
+            .InstancePerLifetimeScope();
     }
 
     private void LoadDbContext(ContainerBuilder builder)
