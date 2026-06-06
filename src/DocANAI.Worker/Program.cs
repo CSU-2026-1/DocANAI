@@ -35,6 +35,7 @@ builder.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 {
     var configuration = new ConfigurationBuilder()
         .AddJsonFile("appsettings.json")
+        .AddEnvironmentVariables()
         .Build();
     var connectionString = configuration.GetConnectionString("DefaultConnection");
     containerBuilder.RegisterModule(new PersistenceInfrastructureModule
