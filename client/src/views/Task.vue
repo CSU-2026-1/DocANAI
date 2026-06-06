@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onMounted, onUnmounted } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import AppHeader from '../components/layout/AppHeader.vue'
@@ -13,7 +14,7 @@ import { STEPS, useTaskStore } from '../stores/task.store.ts'
 
 const taskStore = useTaskStore()
 
-const { currentStep, sourceFiles, questionsText, questionsFile, loading } = storeToRefs(taskStore)
+const { currentStep, sourceFiles, questionsText, questionsFile, reportObjectName, loading } = storeToRefs(taskStore)
 
 const setSourceFiles = (files: File[]) => {
   sourceFiles.value?.push(...files)
@@ -39,23 +40,40 @@ const nextStep = () => {
       return
     }
 
-    // TODO: Send files to server?
-
-    currentStep.value++
+    taskStore.goToNextStep()
   } else if (currentStep.value === 2) {
     if (!questionsText.value && !questionsFile.value) {
       alert('Введите вопросы в текстовое поле или загрузите файл с вопросами')
       return
     }
 
-    // TODO: Send files to server?
-
-    currentStep.value++
-  } else if (currentStep.value === 3) {
-    // TODO: Start generating result
-    alert('Генерация отчета...')
+    taskStore.submitTask().catch(err => console.error(err))
   }
 }
+
+const prevStep = () => {
+  if (currentStep.value > 1) taskStore.goToPreviousStep()
+}
+
+const downloadReport = () => {
+  taskStore.downloadReport()
+}
+
+const newTask = () => {
+  taskStore.resetTask()
+}
+
+onMounted(async () => {
+  try {
+    await taskStore.loadDefaultModelId()
+  } catch (err) {
+    console.error(err)
+  }
+})
+
+onUnmounted(() => {
+  taskStore.resetTask()
+})
 </script>
 
 <template>
@@ -121,7 +139,7 @@ const nextStep = () => {
         class="step__button"
         :text="'Получить ответы'"
         :type="'button'"
-        :disabled="!questionsText && questionsFile === null"
+        :disabled="(!questionsText && !questionsFile) || loading"
         @click="nextStep"
       >
         <template #icon>
@@ -144,13 +162,33 @@ const nextStep = () => {
       </AppButton>
     </div>
     <div v-else-if="currentStep === 3" class="step">
-      <div class="step__result">
+      <div v-if="!reportObjectName" class="step__result">
         <div class="step__result-description">
           <p>ИИ ищет ответы на ваши вопросы</p>
         </div>
         <div class="step__result-hint">
           <p>Пожалуйста, подождите</p>
         </div>
+      </div>
+      <div v-else class="step__result">
+        <div class="step__result-description">
+          <p>Ваши ответы готовы!</p>
+        </div>
+        <AppButton
+          :text="'Скачать файл с ответами'"
+          :type="'button'"
+          @click="downloadReport"
+        >
+          <template #icon>
+            <svg width="24" height="24" viewBox="0 0 24 24">
+              <path
+                fill="none" stroke="currentColor"
+                stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M12.074 3.25v12.478M6.19 10.465l4.822 4.822c.293.293.677.44 1.06.44m5.883-5.262l-4.822 4.822c-.293.293-.677.44-1.06.44m8.677.788v.935a3.3 3.3 0 0 1-3.3 3.3H6.55a3.3 3.3 0 0 1-3.3-3.3v-.935"
+              />
+            </svg>
+          </template>
+        </AppButton>
       </div>
       <AppLoading v-if="loading" class="step__loading" />
     </div>
