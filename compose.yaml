@@ -4,11 +4,11 @@
   db:
     image: postgres:17
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: docanai_db
     ports:
-      - "5432:5432"
+      - "5444:5432"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
       interval: 5s
@@ -19,8 +19,8 @@
   rabbitmq:
     image: rabbitmq:3-management
     environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -43,8 +43,8 @@
     image: minio/minio:latest
     command: server /data --console-address ":9001"
     environment:
-      - MINIO_ROOT_USER=${MINIO_ROOT_USER:-minioadmin}
-      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-minioadmin123}
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -63,7 +63,7 @@
       context: .
       dockerfile: src/DocANAI.Migrator/Dockerfile
     environment:
-      - ConnectionStrings__DefaultConnection=${ConnectionStrings__DefaultConnection}
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=docanai_db;Username=postgres;Password=postgres;"
     depends_on:
       db:
         condition: service_healthy
@@ -75,31 +75,35 @@
       context: .
       dockerfile: src/DocANAI.Api/Dockerfile
     environment:
-      - ConnectionStrings__DefaultConnection=${ConnectionStrings__DefaultConnection}
-      - MinIO__Endpoint=${MINIO_ENDPOINT}
-      - MinIO__PublicEndpoint=${MINIO_PUBLIC_ENDPOINT}
-      - MinIO__AccessKey=${MINIO_ACCESS_KEY}
-      - MinIO__SecretKey=${MINIO_SECRET_KEY}
-      - MinIO__Bucket=${MINIO_BUCKET}
-      - JwtSettings__Secret=${JwtSettings__Secret}
-      - JwtSettings__Issuer=${JwtSettings__Issuer}
-      - JwtSettings__Audience=${JwtSettings__Audience}
-      - JwtSettings__AccessTokenExpiryMinutes=${JwtSettings__AccessTokenExpiryMinutes}
-      - JwtSettings__RefreshTokenExpiryDays=${JwtSettings__RefreshTokenExpiryDays}
-      - RabbitMQ__Host=${RabbitMQ__Host:-rabbitmq}
-      - RabbitMQ__Port=${RabbitMQ__Port:-5672}
-      - RabbitMQ__Username=${RabbitMQ__Username:-guest}
-      - RabbitMQ__Password=${RabbitMQ__Password:-guest}
-      - RabbitMQ__VirtualHost=${RabbitMQ__VirtualHost:-/}
-      - ConnectionStrings__Redis=${ConnectionStrings__Redis}
-      - ASPNETCORE_URLS=http://+:8080
-      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=docanai_db;Username=postgres;Password=postgres;"
+      MinIO__Endpoint: "minio:9000"
+      MinIO__PublicEndpoint: "localhost:9000"
+      MinIO__AccessKey: minioadmin
+      MinIO__SecretKey: minioadmin123
+      MinIO__Bucket: docanai
+      JwtSettings__Secret: "SuperSecretKeyForLocalDevelopment12345!"
+      JwtSettings__Issuer: "DocANAI"
+      JwtSettings__Audience: "DocANAIClient"
+      JwtSettings__AccessTokenExpiryMinutes: "60"
+      JwtSettings__RefreshTokenExpiryDays: "7"
+      RabbitMQ__Host: rabbitmq
+      RabbitMQ__Port: 5672
+      RabbitMQ__Username: guest
+      RabbitMQ__Password: guest
+      RabbitMQ__VirtualHost: "/"
+      ConnectionStrings__Redis: "redis:6379"
+      ASPNETCORE_URLS: "http://+:8080"
+      ASPNETCORE_ENVIRONMENT: "Development"
+      Ollama__BaseUrl: "http://ollama:11434"
+      Ollama__TimeoutSeconds: 120
     ports:
       - "8080:8080"
     depends_on:
       migrator:
         condition: service_completed_successfully
       rabbitmq:
+        condition: service_healthy
+      redis:
         condition: service_healthy
           
   # Worker
@@ -109,22 +113,29 @@
       context: .
       dockerfile: src/DocANAI.Worker/Dockerfile
     environment:
-      - ConnectionStrings__DefaultConnection=${ConnectionStrings__DefaultConnection}
-      - RabbitMQ__Host=${RabbitMQ__Host:-rabbitmq}
-      - RabbitMQ__Port=${RabbitMQ__Port:-5672}
-      - RabbitMQ__Username=${RabbitMQ__Username:-guest}
-      - RabbitMQ__Password=${RabbitMQ__Password:-guest}
-      - RabbitMQ__VirtualHost=${RabbitMQ__VirtualHost:-/}
-      - MinIO__Endpoint=${MINIO_ENDPOINT}
-      - MinIO__AccessKey=${MINIO_ACCESS_KEY}
-      - MinIO__SecretKey=${MINIO_SECRET_KEY}
-      - MinIO__Bucket=${MINIO_BUCKET}
-      - Ollama__BaseUrl=${Ollama__BaseUrl:-http://ollama:11434}
-      - Ollama__TimeoutSeconds=${Ollama__TimeoutSeconds:-120}
-      - Ollama__MaxRetries=${Ollama__MaxRetries:-3}
-      - Ollama__RetryDelaySeconds=${Ollama__RetryDelaySeconds:-2}
-      - Ollama__MaxDocumentCharacters=${Ollama__MaxDocumentCharacters:-120000}
-      - ConnectionStrings__Redis=${ConnectionStrings__Redis}
+      # разные форматы строк для подключения к бд
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=docanai_db;Username=postgres;Password=postgres;"
+      connectionstrings__defaultconnection: "Host=db;Port=5432;Database=docanai_db;Username=postgres;Password=postgres;"
+      ConnectionStrings:DefaultConnection: "Host=db;Port=5432;Database=docanai_db;Username=postgres;Password=postgres;"
+      DOTNET_ENVIRONMENT: "Development"
+      # изменил окружение на дев
+      ASPNETCORE_ENVIRONMENT: "Development"
+      
+      RabbitMQ__Host: rabbitmq
+      RabbitMQ__Port: 5672
+      RabbitMQ__Username: guest
+      RabbitMQ__Password: guest
+      RabbitMQ__VirtualHost: "/"
+      MinIO__Endpoint: "minio:9000"
+      MinIO__AccessKey: minioadmin
+      MinIO__SecretKey: minioadmin123
+      MinIO__Bucket: docanai
+      Ollama__BaseUrl: "http://ollama:11434"
+      Ollama__TimeoutSeconds: 120
+      Ollama__MaxRetries: 3
+      Ollama__RetryDelaySeconds: 2
+      Ollama__MaxDocumentCharacters: 120000
+      ConnectionStrings__Redis: "redis:6379"
     depends_on:
       db:
         condition: service_healthy
@@ -134,6 +145,8 @@
         condition: service_healthy
       ollama:
         condition: service_started
+      redis:
+        condition: service_healthy
   
   client:
     build: ./client

@@ -18,7 +18,7 @@ export const useTaskStore = defineStore('task', () => {
   const sourceFiles = ref<File[]>([])
   const questionsText = ref('')
   const questionsFile = ref<File | null>(null)
-  
+
   const taskId = ref<string | null>(null)
   const reportObjectName = ref<string | null>(null)
 
@@ -43,21 +43,7 @@ export const useTaskStore = defineStore('task', () => {
     error.value = null
 
     try {
-      const response = await api.get<GetAiModelResponse[]>('/ai-models');
-      let models: GetAiModelResponse[] = [];
-
-      if (response.status === 204 || !Array.isArray(response.data)) {
-        models = []
-      } else {
-        models = response.data
-      }
-
-      const availableModel = models.find(m => m.isAvailable)
-      if (availableModel) {
-        selectedModelId.value = availableModel.id
-      } else {
-        throw new Error('No available AI model')
-      }
+      selectedModelId.value = '99c6eae3-f2f4-400d-a02a-7fc5c76844f3'
     } catch (err: any) {
       error.value = 'Ошибка загрузки модели AI'
       throw err
@@ -92,13 +78,15 @@ export const useTaskStore = defineStore('task', () => {
       } as CreateTaskRequest)
 
       taskId.value = taskData.taskId
-
+      
       const sourceUploads = sourceFiles.value.map(file => {
         const formData = new FormData()
         formData.append('file', file)
-        
+
         return api.post(`/filestorage/upload?taskId=${taskId.value}&isQuestionFile=false`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
         })
       })
 
@@ -112,10 +100,12 @@ export const useTaskStore = defineStore('task', () => {
       } else if (questionsFile.value) {
         const formData = new FormData()
         formData.append('file', questionsFile.value)
-
+        
         await api.post(`/filestorage/upload?taskId=${taskId.value}&isQuestionFile=true`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
       }
 
       await api.post<StartTaskResponse>(`/tasks/${taskId.value}/start`)
@@ -133,10 +123,10 @@ export const useTaskStore = defineStore('task', () => {
 
   const pollTaskStatus = (intervalSeconds = 10, maxAttempts = 60) => {
     if (!taskId.value) throw new Error('Task not created')
-    
+
     return new Promise((resolve, reject) => {
       let attempts = 0
-      
+
       pollInterval = window.setInterval(async () => {
         attempts++
 
