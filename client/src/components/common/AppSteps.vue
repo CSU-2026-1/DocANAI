@@ -2,6 +2,7 @@
 const props = defineProps<{
   currentStep: number
   steps: { title: string }[]
+  isLastStepCompleted: boolean
 }>()
 </script>
 
@@ -11,11 +12,11 @@ const props = defineProps<{
       v-for="(_, index) in steps" 
       class="steps__item"
       :key="index"
-      :class="{ 'active': index + 1 === currentStep, 'completed': index + 1 < currentStep }"
+      :class="{ 'active': index + 1 === currentStep, 'completed': index + 1 < currentStep || isLastStepCompleted }"
     >
       <div class="steps__circle">
         <svg
-          v-if="index + 1 < currentStep"
+          v-if="index + 1 < currentStep || isLastStepCompleted"
           width="16" height="16" viewBox="0 0 16 16"
           fill="none"
         >
@@ -37,7 +38,7 @@ const props = defineProps<{
       <div
         v-if="index < steps.length - 1"
         class="steps__line"
-        :class="{ 'active': index + 2 === currentStep, 'completed': index + 2 < currentStep }"
+        :class="{ 'active': index + 2 === currentStep, 'completed': index + 2 < currentStep || isLastStepCompleted }"
       ></div>
     </div>
   </div>

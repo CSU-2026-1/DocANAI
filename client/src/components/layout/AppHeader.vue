@@ -35,7 +35,7 @@ const handleLogout = () => {
           :text="'Новый запрос'"
           :type="'button'"
           :light="true"
-          :disabled="authStore.loading"
+          :disabled="authStore.loading || taskStore.loading"
           @click="handleNewTask"
         >
           <template #icon>

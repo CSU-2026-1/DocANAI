@@ -63,7 +63,7 @@ const processFiles = (array: File[]) => {
       class="visually-hidden"
       ref="fileInputRef"
       type="file"
-      accept=".txt,.docx,.pdf"
+      accept=".docx,.pdf"
       multiple
       @change="handleFilesChange"
     >
@@ -78,7 +78,7 @@ const processFiles = (array: File[]) => {
       <div class="uploader__text">
         <p>
           Выберите файлы или перетащите их сюда<br/>
-          TXT, DOCX, PDF
+          DOCX, PDF
         </p>
       </div>
     </div>

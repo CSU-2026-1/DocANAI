@@ -45,7 +45,7 @@ const processFile = (f: File) => {
       class="visually-hidden"
       ref="fileInputRef"
       type="file"
-      accept=".txt,.docx,.pdf"
+      accept=".docx,.pdf"
       @change="handleFileChange"
     >
     <div class="uploader__content">

@@ -82,6 +82,7 @@ onUnmounted(() => {
     <AppSteps
       :currentStep="currentStep"
       :steps="STEPS"
+      :isLastStepCompleted="reportObjectName !== null"
     />
     <div v-if="currentStep === 1" class="step">
       <div class="step__source-upload">
@@ -169,13 +170,18 @@ onUnmounted(() => {
         <div class="step__result-hint">
           <p>Пожалуйста, подождите</p>
         </div>
+        <AppLoading v-if="loading" class="step__loading" />
       </div>
       <div v-else class="step__result">
         <div class="step__result-description">
-          <p>Ваши ответы готовы!</p>
+          <p>Готово!</p>
+        </div>
+        <div class="step__result-hint">
+          <p>Вы можете скачать файл с ответами</p>
         </div>
         <AppButton
-          :text="'Скачать файл с ответами'"
+          class="step__button"
+          :text="'Скачать'"
           :type="'button'"
           @click="downloadReport"
         >
@@ -190,7 +196,6 @@ onUnmounted(() => {
           </template>
         </AppButton>
       </div>
-      <AppLoading v-if="loading" class="step__loading" />
     </div>
   </section>
 </template>
