@@ -28,27 +28,6 @@ namespace DocANAI.Persistence.Migrations
                 oldClrType: typeof(string),
                 oldType: "character varying(50)",
                 oldMaxLength: 50);
-            
-            migrationBuilder.Sql(@"
-                INSERT INTO a_i_model (id, name, version, is_available)
-                VALUES (gen_random_uuid(), 'llama3', 'latest', true)
-                ON CONFLICT DO NOTHING;
-
-                INSERT INTO priority_level (level, weight) 
-                VALUES ('normal', 1) 
-                ON CONFLICT DO NOTHING;
-
-                INSERT INTO priority (id, priority_level)
-                VALUES ('11111111-1111-1111-1111-111111111111', 'normal')
-                ON CONFLICT DO NOTHING;
-
-                INSERT INTO format (extension, max_size, mime_type) 
-                VALUES
-                ('.pdf', 104857600, 'application/pdf'),
-                ('.docx', 104857600, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'),
-                ('.xlsx', 104857600, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-                ON CONFLICT DO NOTHING;
-            ");
         }
 
         /// <inheritdoc />
