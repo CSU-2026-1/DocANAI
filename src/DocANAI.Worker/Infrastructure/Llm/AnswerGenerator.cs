@@ -3,7 +3,7 @@ using DocANAI.Persistence.Entities;
 using DocANAI.Worker.Infrastructure.Ollama;
 using Microsoft.Extensions.Options;
 
-namespace DocANAI.Worker.Infrastructure.AI;
+namespace DocANAI.Worker.Infrastructure.Llm;
 
 public sealed class AnswerGenerator(IOllamaClient ollamaClient, IOptions<OllamaSettings> options) : IAnswerGenerator
 {

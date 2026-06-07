@@ -1,4 +1,4 @@
-using DocANAI.Worker.Consumers;
+using DocANAI.Worker.Features.ProcessTask;
 using MassTransit;
 
 namespace DocANAI.Worker.Infrastructure.Messaging;

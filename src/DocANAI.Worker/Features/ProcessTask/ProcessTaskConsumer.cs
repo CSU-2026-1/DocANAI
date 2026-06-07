@@ -1,11 +1,13 @@
 using DocANAI.Contracts.Messages;
-using DocANAI.Worker.Features.ProcessTask;
+using DocANAI.Persistence.Entities.ProcessingTask;
+using DocANAI.Persistence.ValueObjects;
 using MassTransit;
+using MediatR;
 
-namespace DocANAI.Worker.Consumers;
+namespace DocANAI.Worker.Features.ProcessTask;
 
 public sealed class ProcessTaskConsumer(
-    IProcessTaskProcessor processTaskProcessor,
+    IMediator mediator,
     ILogger<ProcessTaskConsumer> logger) : IConsumer<ProcessTaskMessage>
 {
     public async Task Consume(ConsumeContext<ProcessTaskMessage> context)
@@ -14,6 +16,8 @@ public sealed class ProcessTaskConsumer(
             "Received ProcessTaskMessage for task {TaskId}",
             context.Message.TaskId);
 
-        await processTaskProcessor.ProcessAsync(context.Message.TaskId, context.CancellationToken);
+        var taskId = IdOf<ProcessingTask>.From(context.Message.TaskId);
+        
+        await mediator.Send(new ProcessTaskCommand(taskId), context.CancellationToken);
     }
 }

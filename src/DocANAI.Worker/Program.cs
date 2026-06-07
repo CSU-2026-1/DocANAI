@@ -2,7 +2,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using DocANAI.Persistence;
 using DocANAI.Worker.Features.ProcessTask;
-using DocANAI.Worker.Infrastructure.AI;
+using DocANAI.Worker.Infrastructure.Llm;
 using DocANAI.Worker.Infrastructure.Messaging;
 using DocANAI.Worker.Infrastructure.Ollama;
 using DocANAI.Worker.Infrastructure.Parsing;
@@ -27,7 +27,9 @@ builder.ConfigureServices((context, services) =>
     services.AddSingleton<IDocumentTextExtractor, DocumentTextExtractor>();
     services.AddSingleton<IExcelReportBuilder, ExcelReportBuilder>();
     services.AddScoped<IAnswerGenerator, AnswerGenerator>();
-    services.AddScoped<IProcessTaskProcessor, ProcessTaskProcessor>();
+    
+    services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+    
     services.AddRabbitMqMassTransit(context.Configuration);
 });
 

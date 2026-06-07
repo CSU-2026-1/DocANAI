@@ -1,6 +1,6 @@
 using DocANAI.Persistence.Entities;
 
-namespace DocANAI.Worker.Infrastructure.AI;
+namespace DocANAI.Worker.Infrastructure.Llm;
 
 public interface IAnswerGenerator
 {
