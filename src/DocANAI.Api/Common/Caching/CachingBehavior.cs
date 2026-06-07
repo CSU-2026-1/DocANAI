@@ -10,7 +10,7 @@ public sealed class CachingBehavior<TRequest, TResponse>(ICacheService cacheServ
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
     {
         var cachedResponse = await cacheService.GetAsync<TResponse>(request.CacheKey, ct);
-        if (cachedResponse != null) return cachedResponse;
+        if (cachedResponse != null && !EqualityComparer<TResponse>.Default.Equals(cachedResponse, default!)) return cachedResponse;
 
         var response = await next(ct);
         
